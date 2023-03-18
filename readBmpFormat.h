@@ -67,4 +67,4 @@ bool isBMP(string fi);
 void readHeaderFormat(string fi, headerFormat &header);
 void readDIB(string fi, dibFormat &dib);
 void readPixelArray(string fi, headerFormat header, dibFormat dib, pixelArray &data);
-
+void readBmpFile(string fi, BMP &b, bool &check);

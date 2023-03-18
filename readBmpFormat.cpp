@@ -89,15 +89,19 @@ void readPixelArray(string fi, headerFormat header, dibFormat dib, pixelArray& d
     }
 }
 
-void readBmpFile(string fi, BMP &b)
+void readBmpFile(string fi, BMP &b, bool &check) 
 {
+    check=1;
     if (!input)
     {
         cout << "Can't open file";
+        check=0;
+        return;
     }
     if (!isBMP(fi))
     {
         cout << fi << " is not BMP file\n";
+        check=0;
         return;
     }
     readHeaderFormat(fi, b.header);

@@ -27,27 +27,41 @@ void printBmpDib(dibFormat dib)
 
 void printPixelArray(pixelArray data, char padding)
 {
-    for (int i=data.rowColor-1;i>=0;i--)
+    for (int i = data.rowColor - 1;i >= 0;i--)
     {
-        for (int j=0;j<data.columnColor;j++)
+        for (int j = 0;j < data.columnColor;j++)
         {
-            cout << data.pixels[j]->blue << data.pixels[j]->green <<data.pixels[j]->red;
-            while(padding>0)
+            cout << data.pixels[j]->blue << data.pixels[j]->green << data.pixels[j]->red;
+            while (padding > 0)
             {
                 cout << "\0";
                 padding--;
-            } 
+            }
         }
+    }
+}
+
+void printBMPtoTerminal(BMP b, bool check)
+{
+    if (check == 0)
+        return;
+    else
+    {
+        printBmpHeader(b.header);
+        printBmpDib(b.dib);
+        char paddingCount = (4 - (b.dib.imageWidth * (b.dib.imageHeight / 8) % 4)) % 4;
+        printPixelArray(b.pA, paddingCount);
     }
 }
 
 void deletePixelArray(pixelArray data)
 {
-    for (int i=0;i<data.rowColor;i++)
+    for (int i = 0;i < data.rowColor;i++)
     {
         delete[] data.pixels[i];
     }
-    delete []data.pixels;
+    delete[]data.pixels;
 }
+
 
 

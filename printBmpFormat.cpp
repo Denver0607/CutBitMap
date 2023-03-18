@@ -1,4 +1,4 @@
-#include"readBmpFormat.h"
+#include"printBmpFormat.h"
 
 void printBmpHeader(headerFormat header)
 {

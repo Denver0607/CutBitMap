@@ -1,4 +1,5 @@
 #include<stdint.h>
+#include<iostream>
 #include<fstream>
 #include<stdio.h>
 #include<string>
@@ -25,7 +26,7 @@ struct dibFormat
     uint32_t imageWidth;
     uint32_t imageHeight;
     uint16_t colorPlanes;
-    uint16_t  colorDepth;
+    uint16_t colorDepth; //which is the number of bits per pixel (pixel size). Typical values are 1, 4, 8, 16, 24 and 32
     uint32_t compression;
     uint32_t pixelArrSize;
     uint32_t horizontalPixel;
@@ -54,8 +55,16 @@ struct pixelArray
     uint32_t columnColor;
 };
 
+struct BMP
+{
+    headerFormat header;
+    dibFormat dib;
+    pixelArray pA;
+    colorTable cT;
+};
+
 bool isBMP(string fi);
 void readHeaderFormat(string fi, headerFormat &header);
 void readDIB(string fi, dibFormat &dib);
-void readBmpPixelArray(string fi, headerFormat header, dibFormat dib, pixelArray &data);
+void readPixelArray(string fi, headerFormat header, dibFormat dib, pixelArray &data);
 

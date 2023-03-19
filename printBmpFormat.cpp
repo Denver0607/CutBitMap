@@ -2,7 +2,7 @@
 
 void printBmpHeader(headerFormat header)
 {
-    cout << "------- BMP Header ------\n";
+    cout << "------ BMP Header ------\n";
     cout << "- File Size: " << header.fileSize << " byte(s)\n";
     cout << "- Reserved1: " << header.reserved1 << endl;
     cout << "- Reserved2: " << header.reserved2 << endl;
@@ -27,6 +27,7 @@ void printBmpDib(dibFormat dib)
 
 void printPixelArray(pixelArray data, char padding)
 {
+    cout << "------ Pixel Array ------\n";
     for (int i = data.rowColor - 1;i >= 0;i--)
     {
         for (int j = 0;j < data.columnColor;j++)
@@ -50,7 +51,7 @@ void printBMPtoTerminal(BMP b, bool check)
         printBmpHeader(b.header);
         printBmpDib(b.dib);
         char paddingCount = (4 - (b.dib.imageWidth * (b.dib.imageHeight / 8) % 4)) % 4;
-        printPixelArray(b.pA, paddingCount);
+        //printPixelArray(b.pA, paddingCount);
     }
 }
 
@@ -62,6 +63,5 @@ void deletePixelArray(pixelArray data)
     }
     delete[]data.pixels;
 }
-
 
 

@@ -15,4 +15,3 @@ int main(int argc, char* argv[])
     deletePixelArray(b.pA);
     input.close();
 }
-

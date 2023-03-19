@@ -44,14 +44,12 @@ void printPixelArray(pixelArray data, char padding)
 
 void printBMPtoTerminal(BMP b, bool check)
 {
-    if (check == 0)
-        return;
-    else
+    printBmpHeader(b.header);
+    printBmpDib(b.dib);
+    if (check == 1)
     {
-        printBmpHeader(b.header);
-        printBmpDib(b.dib);
         char paddingCount = (4 - (b.dib.imageWidth * (b.dib.imageHeight / 8) % 4)) % 4;
-        //printPixelArray(b.pA, paddingCount);
+        printPixelArray(b.pA, paddingCount);
     }
 }
 
@@ -63,5 +61,6 @@ void deletePixelArray(pixelArray data)
     }
     delete[]data.pixels;
 }
+
 
 

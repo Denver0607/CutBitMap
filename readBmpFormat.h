@@ -1,8 +1,13 @@
+#pragma once
+#pragma pack(1)
+
+
 #include<stdint.h>
 #include<iostream>
 #include<fstream>
 #include<stdio.h>
 #include<string>
+#include<stdlib.h>
 
 using namespace std;
 
@@ -42,15 +47,15 @@ struct Color
     unsigned char red;
 };
 
-struct colorTable 
+struct colorTable
 {
-    Color *colors;
+    Color* colors;
     uint32_t length;
 };
 
 struct pixelArray
 {
-    Color **pixels;
+    Color** pixels;
     uint32_t rowColor;
     uint32_t columnColor;
 };
@@ -63,8 +68,10 @@ struct BMP
     colorTable cT;
 };
 
-bool isBMP(string fi);
-void readHeaderFormat(string fi, headerFormat &header);
-void readDIB(string fi, dibFormat &dib);
-void readPixelArray(string fi, headerFormat header, dibFormat dib, pixelArray &data);
-void readBmpFile(string fi, BMP &b, bool &check);
+bool isBMP(FILE* f);
+void readHeaderFormat(FILE* f, headerFormat& header);
+void readDIB(FILE* f, dibFormat& dib);
+void readPixelLine(FILE* f, Color*& line, uint32_t length);
+void skipPadding(FILE* f, char count);
+void readPixelArray(FILE* f, headerFormat header, dibFormat dib, pixelArray& data);
+bool readBMPfile(char* filename, BMP& b);

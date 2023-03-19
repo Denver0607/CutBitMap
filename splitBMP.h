@@ -1,0 +1,3 @@
+#include"readBmpFormat.h"
+
+

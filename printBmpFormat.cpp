@@ -1,5 +1,4 @@
 #include"printBmpFormat.h"
-
 void printBmpHeader(headerFormat header)
 {
     cout << "------ BMP Header ------\n";
@@ -42,16 +41,31 @@ void printPixelArray(pixelArray data, char padding)
     }
 }
 
-void printBMPtoTerminal(BMP b, bool check)
+void printBMPtoTerminal(BMP b)
 {
     printBmpHeader(b.header);
     printBmpDib(b.dib);
-    if (check == 1)
-    {
-        char paddingCount = (4 - (b.dib.imageWidth * (b.dib.imageHeight / 8) % 4)) % 4;
-        printPixelArray(b.pA, paddingCount);
-    }
+        // char paddingCount = (4 - (b.dib.imageWidth * (b.dib.imageHeight / 8) % 4)) % 4;
+        // printPixelArray(b.pA, paddingCount);
 }
+
+// void drawBMP(dibFormat dib, pixelArray data)
+// {
+//     HWND console=GetConsoleWindow();
+//     HDC hdc=GetDC(console);
+
+//     for (int i=0;i<dib.imageHeight;i++)
+//     {
+//         for (int j=0;j<dib.imageWidth;j++)
+//         {
+//             Color pixel=data.pixels[i][j];
+//             SetPixel(hdc,j,i,RGB(pixel.red,pixel.green,pixel.blue));
+//         }
+//     }
+
+//     ReleaseDC(console,hdc);
+// }
+
 
 void deletePixelArray(pixelArray data)
 {

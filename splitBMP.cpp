@@ -19,8 +19,8 @@ void copyDIB(BMP sourceFile, BMP &destinationFile,uint32_t height, uint32_t widt
 BMP cutBmpFile(BMP bmp, uint32_t row, uint32_t column, uint32_t sizeRow, uint32_t sizeColumn)
 {
     BMP bResult;
-    copyHeader(bResult, bmp, sizeRow,sizeColumn);
-    copyDIB(bResult, bmp, sizeRow, sizeColumn);
+    copyHeader(bmp, bResult, sizeRow,sizeColumn);
+    copyDIB(bmp, bResult, sizeRow, sizeColumn);
 
 
     pixelArray data=bmp.pA, dataResult;

@@ -1,7 +1,6 @@
 #pragma once
 #pragma pack(1)
 
-
 #include<stdint.h>
 #include<iostream>
 #include<fstream>

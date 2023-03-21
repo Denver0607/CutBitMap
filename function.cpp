@@ -25,6 +25,15 @@ void readHeaderFormat(FILE* f, headerFormat& header)
     fread(&header, sizeof(headerFormat), 1, f);
 }
 
+void printBmpHeader(headerFormat header)
+{
+    cout << "------ BMP Header ------\n";
+    cout << "- File Size: " << header.fileSize << " byte(s)\n";
+    cout << "- Reserved1: " << header.reserved1 << endl;
+    cout << "- Reserved2: " << header.reserved2 << endl;
+    cout << "- Data Offset: " << header.pixelOffset << " byte(s)\n";
+}
+
 void readDIB(FILE* f, dibFormat& dib)
 {
     if (f == NULL)
@@ -32,6 +41,22 @@ void readDIB(FILE* f, dibFormat& dib)
 
     fseek(f, sizeof(headerFormat), SEEK_SET);
     fread(&dib, sizeof(dibFormat), 1, f);
+}
+
+void printBmpDib(dibFormat dib)
+{
+    cout << "------ DIB Format ------\n";
+    cout << "- DIB Size: " << dib.dibSize << " byte(s)\n";
+    cout << "- Image Width: " << dib.imageWidth << endl;
+    cout << "- Image Height: " << dib.imageHeight << endl;
+    cout << "- Color Planes: " << dib.colorPlanes << endl;
+    cout << "- Color Depth: " << dib.colorDepth << endl;
+    cout << "- Compression Algorithm: " << dib.compression << endl;
+    cout << "- Pixel Array Size: " << dib.pixelArrSize << endl;
+    cout << "- Horizontal resolution: " << dib.horizontalPixel << endl;
+    cout << "- Vertical resolution: " << dib.verticalPixel << endl;
+    cout << "- Number of colors in Color Table: " << dib.numColor << endl;
+    cout << "- Number of important colors in Color Table: " << dib.numImportantColor << endl;
 }
 
 void readPixelLine(FILE* f, Color*& line, uint32_t length)
@@ -43,7 +68,7 @@ void readPixelLine(FILE* f, Color*& line, uint32_t length)
     fread(line, sizeof(Color), length, f);
 }
 
-void skipPadding(FILE* f, char count)
+void scanPadding(FILE* f, char count)
 {
     if (f == NULL)
         return;
@@ -70,7 +95,7 @@ void readPixelArray(FILE* f, headerFormat header, dibFormat dib, pixelArray& dat
     for (int i = 0; i < data.rowColor; i++)
     {
         readPixelLine(f, data.pixels[data.rowColor - i - 1], dib.imageWidth);
-        skipPadding(f, paddingCount);
+        scanPadding(f, paddingCount);
     }
 }
 
@@ -94,32 +119,6 @@ bool readBMPfile(char* filename, BMP& b)
     fclose(f);
 
     return true;
-}
-
-// PRINT BMP FORMAT TO SCREEN
-void printBmpHeader(headerFormat header)
-{
-    cout << "------ BMP Header ------\n";
-    cout << "- File Size: " << header.fileSize << " byte(s)\n";
-    cout << "- Reserved1: " << header.reserved1 << endl;
-    cout << "- Reserved2: " << header.reserved2 << endl;
-    cout << "- Data Offset: " << header.pixelOffset << " byte(s)\n";
-}
-
-void printBmpDib(dibFormat dib)
-{
-    cout << "------ DIB Format ------\n";
-    cout << "- DIB Size: " << dib.dibSize << " byte(s)\n";
-    cout << "- Image Width: " << dib.imageWidth << endl;
-    cout << "- Image Height: " << dib.imageHeight << endl;
-    cout << "- Color Planes: " << dib.colorPlanes << endl;
-    cout << "- Color Depth: " << dib.colorDepth << endl;
-    cout << "- Compression Algorithm: " << dib.compression << endl;
-    cout << "- Pixel Array Size: " << dib.pixelArrSize << endl;
-    cout << "- Horizontal resolution: " << dib.horizontalPixel << endl;
-    cout << "- Vertical resolution: " << dib.verticalPixel << endl;
-    cout << "- Number of colors in Color Table: " << dib.numColor << endl;
-    cout << "- Number of important colors in Color Table: " << dib.numImportantColor << endl;
 }
 
 // PRINT BMP FILE
@@ -149,8 +148,8 @@ void printBMPfile(char* fileName, BMP b)
 void deleteBMPpixelArray(pixelArray data)
 {
     for (int i = 0; i < data.rowColor; i++)
-        free(data.pixels[i]);
-    free(data.pixels);
+        delete[]data.pixels[i];
+    delete[] data.pixels;
 }
 
 // CUT BMP FILE
@@ -170,7 +169,7 @@ void copyDIB(BMP sourceFile, BMP& destinationFile, uint32_t height, uint32_t wid
     destinationFile.dib.pixelArrSize = (width * sourceFile.dib.colorDepth / 8 + paddingCount) * height;
 }
 
-BMP cutBmpFile(BMP bmp, uint32_t row, uint32_t column, uint32_t sizeRow, uint32_t sizeColumn)
+BMP calculatePartOfBmpFile(BMP bmp, uint32_t row, uint32_t column, uint32_t sizeRow, uint32_t sizeColumn)
 {
     BMP bResult;
     copyHeader(bmp, bResult, sizeRow, sizeColumn);
@@ -195,14 +194,13 @@ BMP cutBmpFile(BMP bmp, uint32_t row, uint32_t column, uint32_t sizeRow, uint32_
 }
 
 // SPLIT BMP FILE
-void makeFile(char* name, const char* extendsion, char* filename, int i, int j)
+void makeFile(char* name, const char* extension, char* filename, int i, int j)
 {
-    char tmp[4] = { i + 49, 'x', j + 49, '\0' };
+    char tmp[5] = { '_', i + 49, 'x', j + 49, '\0' };
     strcpy(filename, name);
     strcat(filename, tmp);
-    strcat(filename, extendsion);
+    strcat(filename, extension);
 }
-
 
 void makeDestName(char* s, char* cut)
 {
@@ -210,33 +208,31 @@ void makeDestName(char* s, char* cut)
     while (s[start] != '/' && start >= 0)
         start--;
     start++;
-    while (s[start] != '.' && start < strlen(s)) 
+    while (s[start] != '.' && start < strlen(s))
         cut[i++] = s[start++];
     cut[i] = '\0';
 }
 
-void splitBMPfile(char* sourceFile, char* destName, int hsplit, int wsplit)
+void cutBMPfile(char* sourceFile, char* destName, int heightSplit, int widthSplit)
 {
-    BMP bmp_src, bmp_dest;
-    if (!readBMPfile(sourceFile, bmp_src)) return;
-    int pWidth = bmp_src.dib.imageWidth / wsplit;
-    int pHeight = bmp_src.dib.imageHeight / hsplit;
+    BMP bmpSource, bmpDestination;
+    if (!readBMPfile(sourceFile, bmpSource)) return;
+    int pWidth = bmpSource.dib.imageWidth / widthSplit;
+    int pHeight = bmpSource.dib.imageHeight / heightSplit;
     int x, y;
-    char* destFile = (char*)malloc(strlen(destName + 7) * sizeof(char));
-
+    char* destFile = new char[strlen(destName + 7)];
     x = 0;
-    for (int i = 0; i < hsplit; i++) {
+    for (int i = 0; i < heightSplit; i++) {
         y = 0;
-        for (int j = 0; j < wsplit; j++) {
-            bmp_dest = cutBmpFile(bmp_src, x, y, pHeight, pWidth);
+        for (int j = 0; j < widthSplit; j++) {
+            bmpDestination = calculatePartOfBmpFile(bmpSource, x, y, pHeight, pWidth);
             makeFile(destName, BMP_EXT, destFile, i, j);
-            printBMPfile(destFile, bmp_dest);
-            deleteBMPpixelArray(bmp_dest.pA);
+            printBMPfile(destFile, bmpDestination);
+            deleteBMPpixelArray(bmpDestination.pA);
             y += pWidth;
         }
         x += pHeight;
     }
-    deleteBMPpixelArray(bmp_src.pA);
+    deleteBMPpixelArray(bmpSource.pA);
 }
-
 

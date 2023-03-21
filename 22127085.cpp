@@ -22,8 +22,10 @@ int main(int argc, char* argv[])
     }
 
     cout << "BMP FIlE FORMAT:\n";
-    readBMPfile(sourcePath, bmp);
-    printBmpHeader(bmp.header);
-    printBmpDib(bmp.dib);
-    splitBMPfile(argv[1], dest, heightSplit, widthSplit);
+    if (readBMPfile(sourcePath, bmp) == true)
+    {
+        printBmpHeader(bmp.header);
+        printBmpDib(bmp.dib);
+        cutBMPfile(argv[1], dest, heightSplit, widthSplit);
+    }
 }

@@ -72,15 +72,13 @@ struct BMP
 // READING BMP FILE FORMAT
 bool isBMP(FILE* f);
 void readHeaderFormat(FILE* f, headerFormat& header);
+void printBmpHeader(headerFormat header);
 void readDIB(FILE* f, dibFormat& dib);
+void printBmpDib(dibFormat dib);
 void readPixelLine(FILE* f, Color*& line, uint32_t length);
-void skipPadding(FILE* f, char count);
+void scanPadding(FILE* f, char count);
 void readPixelArray(FILE* f, headerFormat header, dibFormat dib, pixelArray& data);
 bool readBMPfile(char* filename, BMP& b);
-
-// PRINT BMP FILE TO SCREEN
-void printBmpHeader(headerFormat header);
-void printBmpDib(dibFormat dib);
 
 // PRINT BMP FILE
 void printBMPfile(char* fileName, BMP b);
@@ -89,9 +87,9 @@ void deleteBMPpixelArray(pixelArray data);
 // CUT BMP
 void copyHeader(BMP sourceFile, BMP &destinationFile, uint32_t height, uint32_t width);
 void copyDIB(BMP sourceFile, BMP &destinationFile,uint32_t height, uint32_t width);
-BMP cutBmpFile(BMP bmp, uint32_t row, uint32_t column, uint32_t sizeRow, uint32_t sizeColumn);
+BMP calculatePartOfBmpFile(BMP bmp, uint32_t row, uint32_t column, uint32_t sizeRow, uint32_t sizeColumn);
 
 // SPLIT BMP FILE
-void makeFile(char* name, const char* extendsion, char* filename, int i, int j);
+void makeFile(char* name, const char* extension, char* filename, int i, int j);
 void makeDestName(char* s, char* cut);
-void splitBMPfile(char* sourceFile, char* destName, int hsplit, int wsplit);
+void cutBMPfile(char* sourceFile, char* destName, int heightSplit, int widthSplit);

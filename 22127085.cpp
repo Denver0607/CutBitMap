@@ -20,9 +20,10 @@ int main(int argc, char* argv[])
             widthSplit = atoi(argv[i + 1]);
         }
     }
-    
-    cout <<"***** "<< argv[1] << " FORMAT *****\n";
+
+    cout << "BMP FIlE FORMAT:\n";
     readBMPfile(sourcePath, bmp);
-    printBMPtoTerminal(bmp);
-    splitBMPfile(argv[1],dest, heightSplit, widthSplit);
+    printBmpHeader(bmp.header);
+    printBmpDib(bmp.dib);
+    splitBMPfile(argv[1], dest, heightSplit, widthSplit);
 }
